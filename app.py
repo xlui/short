@@ -4,7 +4,7 @@ from enum import Enum
 from flask import Flask, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 
-from config import cfg
+from config import cfg, secret, domain
 from core import base10to62
 
 app = Flask(__name__)
@@ -92,7 +92,7 @@ def encode():
             short = Short(url=url, code=code, type=ShortType.Custom.value)
             db.session.add(short)
             db.session.commit()
-            return Response(Code.OK, data=cfg.BASE_DOMAIN + code).build()
+            return Response(Code.OK, data=domain + code).build()
     else:
         # Use system generated shorten code
         short = Short(url=url, type=ShortType.System.value)
@@ -100,7 +100,7 @@ def encode():
         db.session.commit()
 
         # Generate shorten code using id
-        code = base10to62(short.id)
+        code = base10to62(short.id, secret)
 
         # Judge generated code exist or not
         recheck_count = 0
@@ -111,14 +111,14 @@ def encode():
                 # If exist, regenerate using exist id, the reason is that only customized code will
                 # cause conflict with auto-generated code. And the id of customized code's record
                 # has not been used to generate code.
-                code = base10to62(exist.id)
+                code = base10to62(exist.id, secret)
                 recheck_count += 1
 
         # Update short table
         short.code = code
         db.session.add(short)
         db.session.commit()
-        return Response(Code.OK, data=cfg.BASE_DOMAIN + code).build()
+        return Response(Code.OK, data=domain + code).build()
 
 
 @app.route('/<code>', methods=['GET', 'POST'])

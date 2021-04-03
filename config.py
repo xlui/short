@@ -9,6 +9,13 @@ secret = os.environ.get('SECRET') or 'PnX6DWihwH8OAJklcaq9UVzNedBpSI3yCvMfbjstLZ
 if len(secret) != 62 or len(set(secret)) != 62:
     print(f'SECRET is invalid. secret:{secret}')
     sys.exit(1)
+domain = os.environ.get('DOMAIN') or 'http://127.0.0.1:5000/'
+if not domain:
+    print(f'DOMAIN is invalid. domain:{domain}')
+    sys.exit(1)
+if not domain.endswith('/'):
+    print(f'DOMAIN should ends with "/". domain:{domain}')
+    sys.exit(1)
 
 
 class Config:
@@ -25,18 +32,15 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = f'sqlite:///{os.path.join(work_dir, "data-dev.sqlite")}'
-    BASE_DOMAIN = 'http://127.0.0.1:5000/'
 
 
 class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = f'sqlite:///{os.path.join(work_dir, "data-test.sqlite")}'
-    BASE_DOMAIN = 'http://127.0.0.1:5000/'
 
 
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = f'sqlite:///{os.path.join(work_dir, "data.sqlite")}'
-    BASE_DOMAIN = 'https://s.xlui.app/'
 
 
 __cfgs = {
