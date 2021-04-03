@@ -1,8 +1,13 @@
 import datetime
 import os
+import sys
 
-work_dir = os.path.abspath(os.curdir)
+work_dir = os.path.dirname(os.path.abspath(__file__))
 env = os.environ.get('ENV') or 'default'
+secret = os.environ.get('SECRET') or 'PnX6DWihwH8OAJklcaq9UVzNedBpSI3yCvMfbjstLZG7oK5YT2rEx01QmF4uRg'
+# check secret
+if len(secret) != 62 or len(set(secret)):
+    sys.exit(1)
 
 
 class Config:
@@ -19,15 +24,18 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = f'sqlite:///{os.path.join(work_dir, "data-dev.sqlite")}'
+    BASE_DOMAIN = 'http://127.0.0.1:5000/'
 
 
 class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = f'sqlite:///{os.path.join(work_dir, "data-test.sqlite")}'
+    BASE_DOMAIN = 'http://127.0.0.1:5000/'
 
 
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = f'sqlite:///{os.path.join(work_dir, "data.sqlite")}'
+    BASE_DOMAIN = 'https://s.xlui.app/'
 
 
 __cfgs = {
