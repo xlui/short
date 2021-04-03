@@ -1,4 +1,4 @@
-FROM python:3
+FROM python:3-slim
 
 ADD . /data
 WORKDIR /data
@@ -10,3 +10,4 @@ RUN pip install -U pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 ENTRYPOINT ["python", "app.py"]
+
