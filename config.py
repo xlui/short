@@ -6,7 +6,8 @@ work_dir = os.path.dirname(os.path.abspath(__file__))
 env = os.environ.get('ENV') or 'default'
 secret = os.environ.get('SECRET') or 'PnX6DWihwH8OAJklcaq9UVzNedBpSI3yCvMfbjstLZG7oK5YT2rEx01QmF4uRg'
 # check secret
-if len(secret) != 62 or len(set(secret)):
+if len(secret) != 62 or len(set(secret)) != 62:
+    print(f'SECRET is invalid. secret:{secret}')
     sys.exit(1)
 
 
